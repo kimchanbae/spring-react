@@ -132,7 +132,7 @@ pipeline {
                     docker run -d \
                       --name "${CONTAINER_NAME}" \
                       --restart unless-stopped \
-                      -p 3000:3000 \
+                      -p 9000:9000 \
                       "${LOCAL_IMAGE}:${IMAGE_TAG}"
                 '''
             }
