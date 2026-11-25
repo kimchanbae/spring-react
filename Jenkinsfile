@@ -174,7 +174,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    sleep 5
+                    sleep 20
                     docker inspect \
                       --format='{{.State.Running}}' \
                       ${CONTAINER_NAME} | grep -q true
