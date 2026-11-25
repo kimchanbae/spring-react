@@ -143,7 +143,7 @@ pipeline {
         stage('Deploy Application') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
-            }
+            }  
             steps {
                 sh '''
                     set -e
