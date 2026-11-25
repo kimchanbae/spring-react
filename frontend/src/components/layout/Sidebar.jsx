@@ -10,7 +10,7 @@ const menus =[
         icon: LayoutDashboard
     },
     {
-        name: '회원관리 변경',
+        name: '회원관리',
         path: '/users',
         icon: Users
     },
