@@ -150,9 +150,11 @@ pipeline {
 
                     export IMAGE_TAG=latest
 
+                    docker rm -f spring-react || true
+
                     docker compose pull spring-react
 
-                    docker compose up -d --force-recreate spring-react
+                    docker compose up -d spring-react
                 '''
             }
         }
