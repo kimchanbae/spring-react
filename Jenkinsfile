@@ -146,30 +146,15 @@ pipeline {
             }
             steps {
                 sh '''
-                    set -eux
+                    set -e
 
-                    echo "===== Docker Compose Version ====="
-                    docker compose version
-
-                    echo "===== Current Directory ====="
-                    pwd
-
-                    echo "===== Compose File Check ====="
-                    ls -la docker-compose.yaml
-                    ls -la .env.docker
-
-                    echo "===== Pull Image ====="
-                    export IMAGE_TAG=latest
-                    docker compose pull spring-react
-
-                    echo "===== Deploy Container ====="
-                    docker compose up -d --force-recreate spring-react
-
-                    echo "===== Container Status ====="
-                    docker compose ps
-
-                    echo "===== Container Logs ====="
-                    docker compose logs --tail=50 spring-react
+                    docker rm -f "${CONTAINER_NAME}" || true
+                    
+                    docker run -d \
+                      --name "${CONTAINER_NAME}" \
+                      --restart unless-stopped \
+                      -p 9000:9000 \
+                      "${LOCAL_IMAGE}:${IMAGE_TAG}"
                 '''
             }
         }
