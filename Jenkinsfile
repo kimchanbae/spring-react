@@ -127,13 +127,13 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker rm -f "${CONTAINER_NAME}" || true
+                    set -e
 
-                    docker run -d \
-                      --name "${CONTAINER_NAME}" \
-                      --restart unless-stopped \
-                      -p 9000:9000 \
-                      "${LOCAL_IMAGE}:${IMAGE_TAG}"
+                    export IMAGE_TAG=latest
+
+                    docker compose pull spring-react
+
+                    docker compose up -d --force-recreate spring-react
                 '''
             }
         }
