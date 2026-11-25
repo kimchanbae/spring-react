@@ -153,18 +153,16 @@ pipeline {
                     cd "$WORKSPACE"
 
                     # 기존 Compose 프로젝트 정리
-                    docker compose -p spring-react down \
-                        --remove-orphans || true
+                    docker compose -p ${CONTAINER_NAME} down -remove-orphans || true
 
                     # 이전에 고정 이름으로 생성된 컨테이너 정리
-                    docker rm -f spring-react 2>/dev/null || true
+                    docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
 
                     # 최신 이미지 다운로드
-                    docker compose -p spring-react pull spring-react
+                    docker compose -p ${CONTAINER_NAME} pull spring-react
 
                     # 새 컨테이너 생성 및 실행
-                    docker compose -p spring-react up \
-                        -d --force-recreate --remove-orphans
+                    docker compose -p ${CONTAINER_NAME} up -d --force-recreate --remove-orphans
                 '''
             }
         }
