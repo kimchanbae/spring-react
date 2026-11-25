@@ -120,6 +120,25 @@ pipeline {
             }
         }
 
+        // docker compose verion 확인
+        stage('Check Docker Environment') {
+            steps {
+                sh '''
+                    echo "===== Docker Version ====="
+                    docker --version
+
+                    echo "===== Docker Compose ====="
+                    docker compose version || true
+
+                    echo "===== Docker Plugins ====="
+                    docker info
+
+                    echo "===== Docker Location ====="
+                    which docker
+                '''
+            }
+        }
+
         // 4. 컨테이너 배포
         stage('Deploy Application') {
             when {
@@ -127,15 +146,30 @@ pipeline {
             }
             steps {
                 sh '''
-                    set -e
+                    set -eux
 
-                    docker rm -f "${CONTAINER_NAME}" || true
-                    
-                    docker run -d \
-                      --name "${CONTAINER_NAME}" \
-                      --restart unless-stopped \
-                      -p 9000:9000 \
-                      "${LOCAL_IMAGE}:${IMAGE_TAG}"
+                    echo "===== Docker Compose Version ====="
+                    docker compose version
+
+                    echo "===== Current Directory ====="
+                    pwd
+
+                    echo "===== Compose File Check ====="
+                    ls -la docker-compose.yaml
+                    ls -la .env.docker
+
+                    echo "===== Pull Image ====="
+                    export IMAGE_TAG=latest
+                    docker compose pull spring-react
+
+                    echo "===== Deploy Container ====="
+                    docker compose up -d --force-recreate spring-react
+
+                    echo "===== Container Status ====="
+                    docker compose ps
+
+                    echo "===== Container Logs ====="
+                    docker compose logs --tail=50 spring-react
                 '''
             }
         }
