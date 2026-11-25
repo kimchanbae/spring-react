@@ -12,9 +12,9 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = 'ghcr.io/kimchanbae/python-api' 
-        LOCAL_IMAGE = 'python-api'
-        CONTAINER_NAME = 'python-app'
+        IMAGE_NAME = 'ghcr.io/kimchanbae/spring-react-api' 
+        LOCAL_IMAGE = 'spring-react-api'  
+        CONTAINER_NAME = 'spring-react'
         IMAGE_TAG = 'latest'
     }
 
@@ -42,7 +42,7 @@ pipeline {
         stage('Check Image Update') {
             steps {
                 script {
-                    env.DIGEST_FILE = '/var/jenkins_home/deployed-python-api-digest'
+                    env.DIGEST_FILE = '/var/jenkins_home/deployed-spring-react-digest'
                     
                     env.REMOTE_DIGEST = sh(
                         script: '''
@@ -132,7 +132,7 @@ pipeline {
                     docker run -d \
                       --name "${CONTAINER_NAME}" \
                       --restart unless-stopped \
-                      -p 8501:8501 \
+                      -p 9000:9000 \
                       "${LOCAL_IMAGE}:${IMAGE_TAG}"
                 '''
             }
