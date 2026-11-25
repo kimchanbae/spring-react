@@ -121,23 +121,23 @@ pipeline {
         }
 
         // docker compose verion 확인
-        stage('Check Docker Environment') {
-            steps {
-                sh '''
-                    echo "===== Docker Version ====="
-                    docker --version
+        // stage('Check Docker Environment') {
+        //     steps {
+        //         sh '''
+        //             echo "===== Docker Version ====="
+        //             docker --version
 
-                    echo "===== Docker Compose ====="
-                    docker compose version || true
+        //             echo "===== Docker Compose ====="
+        //             docker compose version || true
 
-                    echo "===== Docker Plugins ====="
-                    docker info
+        //             echo "===== Docker Plugins ====="
+        //             docker info
 
-                    echo "===== Docker Location ====="
-                    which docker
-                '''
-            }
-        }
+        //             echo "===== Docker Location ====="
+        //             which docker
+        //         '''
+        //     }
+        // }
 
         // 4. 컨테이너 배포
         stage('Deploy Application') {
@@ -148,13 +148,11 @@ pipeline {
                 sh '''
                     set -e
 
-                    docker rm -f "${CONTAINER_NAME}" || true
-                    
-                    docker run -d \
-                      --name "${CONTAINER_NAME}" \
-                      --restart unless-stopped \
-                      -p 9000:9000 \
-                      "${LOCAL_IMAGE}:${IMAGE_TAG}"
+                    export IMAGE_TAG=latest
+
+                    docker compose pull spring-react
+
+                    docker compose up -d --force-recreate spring-react
                 '''
             }
         }
