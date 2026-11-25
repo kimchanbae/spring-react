@@ -2,8 +2,6 @@ services:
   spring-react:
     image: ghcr.io/kimchanbae/spring-react-api:${IMAGE_TAG:-latest}
 
-    container_name: spring-react
-
     ports:
       - "9000:9000"
 
