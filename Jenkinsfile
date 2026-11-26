@@ -14,7 +14,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'ghcr.io/kimchanbae/spring-react-api' 
         LOCAL_IMAGE = 'spring-react-api'  
-        CONTAINER_NAME = 'spring-react'
+        CONTAINER_NAME = 'spring-react-app'
         IMAGE_TAG = 'latest'
     }
 
@@ -148,22 +148,29 @@ pipeline {
                 sh '''
                     set -e
 
-                    export IMAGE_TAG=latest
+                    docker rm -f "${CONTAINER_NAME}" || true
 
-                    cd "$WORKSPACE"
-
-                    # 기존 Compose 프로젝트 정리
-                    docker compose -p ${CONTAINER_NAME} down -remove-orphans || true
-
-                    # 이전에 고정 이름으로 생성된 컨테이너 정리
-                    docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
-
-                    # 최신 이미지 다운로드
-                    docker compose -p ${CONTAINER_NAME} pull spring-react
-
-                    # 새 컨테이너 생성 및 실행
-                    docker compose -p ${CONTAINER_NAME} up -d --force-recreate --remove-orphans
+                    docker run -d \
+                      --name "${CONTAINER_NAME}" \
+                      --restart unless-stopped \
+                      -p 9000:9000 \
+                      "${LOCAL_IMAGE}:${IMAGE_TAG}"
                 '''
+                // export IMAGE_TAG=latest
+
+                //     cd "$WORKSPACE"
+
+                //     # 기존 Compose 프로젝트 정리
+                //     docker compose -p ${CONTAINER_NAME} down -remove-orphans || true
+
+                //     # 이전에 고정 이름으로 생성된 컨테이너 정리
+                //     docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
+
+                //     # 최신 이미지 다운로드
+                //     docker compose -p ${CONTAINER_NAME} pull spring-react
+
+                //     # 새 컨테이너 생성 및 실행
+                //     docker compose -p ${CONTAINER_NAME} up -d --force-recreate --remove-orphans
             }
         }
 
@@ -175,9 +182,13 @@ pipeline {
             steps {
                 sh '''
                     sleep 20
+
                     docker inspect \
                       --format='{{.State.Running}}' \
                       ${CONTAINER_NAME} | grep -q true
+
+                    curl -f http://127.0.0.1:9000/actuator/health
+
                     docker ps --filter name="${CONTAINER_NAME}"
                     docker logs --tail 30 "${CONTAINER_NAME}"
                 '''
@@ -216,6 +227,7 @@ pipeline {
 
                     # python-api 이미지 목록 확인
                     docker image ls "${LOCAL_IMAGE}" \
+                    --no-trunc \
                     --format '{{.Repository}}:{{.Tag}} {{.ID}}' |
                     while read IMAGE_TAG IMAGE_ID; do
 

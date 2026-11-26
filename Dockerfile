@@ -42,8 +42,8 @@ WORKDIR /app
 
 COPY --from=backend-build \
     /backend/target/*.jar \
-    app.jar
+    spring-react-app.jar
 
 EXPOSE 9000
 
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
+ENTRYPOINT [ "java", "-jar", "spring-react-app.jar" ]
