@@ -181,15 +181,35 @@ pipeline {
             }
             steps {
                 sh '''
-                    sleep 20
+                    echo "===== Container Status ====="
 
                     docker inspect \
-                      --format='{{.State.Running}}' \
-                      ${CONTAINER_NAME} | grep -q true
+                    --format='{{.State.Running}}' \
+                    "${CONTAINER_NAME}" | grep -q true
 
-                    curl -f http://127.0.0.1:9000/actuator/health
+                    echo "===== Health Check ====="
 
+                    for i in $(seq 1 30); do
+                        if curl -fsS \
+                        http://host.docker.internal:9000/actuator/health; then
+                            echo "Application is healthy!"
+                            break
+                        fi
+
+                        if [ "$i" -eq 30 ]; then
+                            echo "Health check failed!"
+                            docker logs --tail 100 "${CONTAINER_NAME}"
+                            exit 1
+                        fi
+
+                        echo "Waiting for Spring Boot... ($i/30)"
+                        sleep 5
+                    done
+
+                    echo "===== Container Info ====="
                     docker ps --filter name="${CONTAINER_NAME}"
+
+                    echo "===== Application Logs ====="
                     docker logs --tail 30 "${CONTAINER_NAME}"
                 '''
             }
