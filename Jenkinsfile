@@ -257,7 +257,7 @@ pipeline {
         stage('Docker Disk Cleanup') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
-            }
+            } 
             steps {
                 sh '''
                     set -e
