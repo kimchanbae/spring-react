@@ -120,26 +120,7 @@ pipeline {
             }
         }
 
-        // docker compose verion 확인
-        // stage('Check Docker Environment') {
-        //     steps {
-        //         sh '''
-        //             echo "===== Docker Version ====="
-        //             docker --version
-
-        //             echo "===== Docker Compose ====="
-        //             docker compose version || true
-
-        //             echo "===== Docker Plugins ====="
-        //             docker info
-
-        //             echo "===== Docker Location ====="
-        //             which docker
-        //         '''
-        //     }
-        // }
-
-        // 4. 컨테이너 배포
+        // 5. 컨테이너 배포
         stage('Deploy Application') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
@@ -156,25 +137,10 @@ pipeline {
                       -p 9000:9000 \
                       "${LOCAL_IMAGE}:${IMAGE_TAG}"
                 '''
-                // export IMAGE_TAG=latest
-
-                //     cd "$WORKSPACE"
-
-                //     # 기존 Compose 프로젝트 정리
-                //     docker compose -p ${CONTAINER_NAME} down -remove-orphans || true
-
-                //     # 이전에 고정 이름으로 생성된 컨테이너 정리
-                //     docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
-
-                //     # 최신 이미지 다운로드
-                //     docker compose -p ${CONTAINER_NAME} pull spring-react
-
-                //     # 새 컨테이너 생성 및 실행
-                //     docker compose -p ${CONTAINER_NAME} up -d --force-recreate --remove-orphans
             }
         }
 
-        // 5. 배포 확인
+        // 6. 배포 확인
         stage('Verify Deployment') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
@@ -215,7 +181,7 @@ pipeline {
             }
         }
 
-        // 6. 배포 성공 Digest 저장
+        // 7. 배포 성공 Digest 저장
         stage('Save Deployed Digest') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
@@ -230,7 +196,7 @@ pipeline {
             }
         }
 
-        // 이전 이미지 버전 정리
+        // 8.이전 이미지 버전 정리
         stage('Cleanup Old Images') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
@@ -287,7 +253,7 @@ pipeline {
             }
         }
 
-        // 미사용 컨테이너, 빌드 캐시 정리
+        // 9.미사용 컨테이너, 빌드 캐시 정리
         stage('Docker Disk Cleanup') {
             when {
                 expression { env.SHOULD_DEPLOY == 'true' }
