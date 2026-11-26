@@ -2,6 +2,9 @@ services:
   spring-react:
     image: ghcr.io/kimchanbae/spring-react-api:${IMAGE_TAG:-latest}
 
+    # 컨테이너 이름 고정
+    container_name: spring-react-app
+
     ports:
       - "9000:9000"
 

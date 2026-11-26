@@ -14,7 +14,7 @@ services:
     group_add:
       - "0"
 
-    extra_host:
+    extra_hosts:
       - "host.docker.internal:host-gateway"
 
     restart: unless-stopped
