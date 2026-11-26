@@ -32,4 +32,5 @@ networks:
 
 volumes:
   jenkins_data:
-    name: jenkins_data 
+    external: true
+    name: python_jenkins_data
