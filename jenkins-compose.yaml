@@ -30,4 +30,4 @@ networks:
 
 volumes:
   jenkins_data:
-    name: jenkins_data
+    name: jenkins_data 
